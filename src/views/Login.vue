@@ -56,7 +56,9 @@ export default {
       this.$msg.message("登录成功标题", "123消息", 1500, true);
       this.$api.Login.userLogin(this.user)
         .then(result => {
-          console.log(result);
+          const { data: res } = result;
+          console.log(res.data);
+          this.$store.dispatch("login", res.data.token);
         })
         .catch(error => {
           console.log(error);

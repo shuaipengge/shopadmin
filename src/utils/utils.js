@@ -4,7 +4,7 @@ export default {
     return sessionStorage.getItem("TOKEN");
   },
   setToken(token) {
-    this.setSession("TOKEN", token);
+    sessionStorage.setItem("TOKEN", token);
   },
   removeToken() {
     return sessionStorage.removeItem("TOKEN");

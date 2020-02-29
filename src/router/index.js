@@ -2,7 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import UsersRouter from "./users";
 import Home from "../views/Home.vue";
-import utils from "../utils/utils";
+import store from "../store";
 
 const whiteList = ["/login", "/home"]; // 不重定向白名单
 Vue.use(VueRouter);
@@ -19,6 +19,12 @@ const routes = [
     name: "Login",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Login.vue")
+  },
+  {
+    path: "/logout",
+    name: "Logout",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Logout.vue")
   }
 ];
 
@@ -28,7 +34,7 @@ const router = new VueRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  if (utils.getToken()) {
+  if (store.getters.isLogin) {
     if (to.path === "/login") {
       next({ path: "/" });
     } else {
