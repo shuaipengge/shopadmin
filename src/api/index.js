@@ -6,7 +6,9 @@
 
 // 引入各个模块的api
 import Login from "./login";
+import System from "./system";
 
 export default {
-  Login
+  Login,
+  System
 };
