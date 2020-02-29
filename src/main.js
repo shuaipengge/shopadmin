@@ -9,6 +9,8 @@ import message from "./utils/Prompt";
 // 导入ElementUI
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
+// 初始化css
+import "./assets/css/initialize.css";
 
 // 绑定至原型
 Vue.prototype.$api = api;

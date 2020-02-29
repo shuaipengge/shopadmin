@@ -11,14 +11,13 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  .title {
-      width: 300px;
-      height: 80px;
-      font-size: 28px;
-      margin: 30px auto;
-  }
 }
-
+.login_box .title {
+  width: 300px;
+  height: 80px;
+  font-size: 28px;
+  margin: 30px auto;
+}
 .login_form {
   position: absolute;
   bottom: 0;
@@ -26,7 +25,6 @@
   padding: 0 20px;
   box-sizing: border-box;
 }
-
 .btns {
   display: flex;
   justify-content: flex-end;
