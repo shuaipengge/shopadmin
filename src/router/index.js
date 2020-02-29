@@ -1,30 +1,28 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import UsersRouter from "./users";
-import Home from "../views/Home.vue";
 import store from "../store";
 
-const whiteList = ["/login", "/home"]; // 不重定向白名单
+const whiteList = ["/login"]; // 不重定向白名单
 Vue.use(VueRouter);
 
 const routes = [
   UsersRouter,
   {
-    path: "/home",
-    name: "Home",
-    component: Home
+    path: "/",
+    name: "Layout",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "@/views/Layout.vue")
   },
   {
     path: "/login",
     name: "Login",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Login.vue")
+    component: () => import(/* webpackChunkName: "about" */ "@/views/Login.vue")
   },
   {
-    path: "/logout",
-    name: "Logout",
+    path: "*",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Logout.vue")
+      import(/* webpackChunkName: "about" */ "@/components/Notfind.vue")
   }
 ];
 
