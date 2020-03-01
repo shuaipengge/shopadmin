@@ -15,14 +15,14 @@
         <!-- Tags -->
         <HeaderTags />
         <!-- Main -->
-        <Main />
+        <!-- 路由占位符 -->
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import Main from "@/views/Home";
 import HeaderTags from "@/components/layout/HeaderTags";
 import Aside from "@/components/layout/Aside";
 import Header from "@/components/layout/Header";
@@ -37,7 +37,6 @@ export default {
   components: {
     Header,
     Aside,
-    Main,
     HeaderTags
   },
   methods: {

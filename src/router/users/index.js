@@ -1,26 +1,11 @@
 export default {
-  path: "/user",
-  //   component: () => import("@/views/Movie"),
+  path: "/",
+  redirect: "/home",
+  component: () => import("@/views/Layout"),
   children: [
-    // {
-    //   path: "city",
-    //   component: () => import("@/components/City")
-    // },
-    // {
-    //   path: "nowPlaying",
-    //   component: () => import("@/components/NowPlaying")
-    // },
-    // {
-    //   path: "comingSoon",
-    //   component: () => import("@/components/ComingSoon")
-    // },
-    // {
-    //   path: "search",
-    //   component: () => import("@/components/Search")
-    // },
-    // {
-    //   path: "/movie",
-    //   redirect: "/movie/NowPlaying"
-    // }
+    {
+      path: "/home",
+      component: () => import("@/views/Home")
+    }
   ]
 };
