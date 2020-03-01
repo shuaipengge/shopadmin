@@ -6,6 +6,10 @@ export default {
     {
       path: "/home",
       component: () => import("@/views/Home")
+    },
+    {
+      path: "/users",
+      component: () => import("@/views/user/Users")
     }
   ]
 };
