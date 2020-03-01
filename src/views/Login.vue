@@ -33,7 +33,9 @@
         <!-- 按钮 -->
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登录</el-button>
-          <el-button type="info" @click="restLoginForm">重置</el-button>
+          <el-button type="info" @click="restLoginForm('loginFormRef')"
+            >重置</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -67,9 +69,10 @@ export default {
   },
   methods: {
     // 点击重置按钮，重置登录表单
-    restLoginForm() {
+    restLoginForm(loginFormRef) {
       console.log(this);
-      this.$refs.loginFormRef.resetFields();
+      // this.$refs.loginFormRef.resetFields();
+      this.$refs[loginFormRef].resetFields(); // 新写法
     },
     login() {
       this.$api.Login.userLogin(this.user)
