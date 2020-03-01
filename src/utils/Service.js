@@ -9,9 +9,6 @@ const BASE_URL = process.env.VUE_APP_BASE_API
 
 console.log("当前接口地址：" + BASE_URL);
 
-// 获取本地token
-const TOKEN = utils.getToken();
-
 // 创建axios实例
 const service = axios.create({
   timeout: 30000 // 请求超时时间
@@ -19,8 +16,11 @@ const service = axios.create({
 // 添加request拦截器
 service.interceptors.request.use(
   config => {
-    // 配置URL
-    config.headers.Authorization = TOKEN;
+    // 获取本地token
+    const TOKEN = utils.getToken();
+    if (TOKEN) {
+      config.headers.Authorization = TOKEN;
+    }
     return config;
   },
   error => {
