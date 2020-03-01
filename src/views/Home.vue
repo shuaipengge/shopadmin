@@ -9,3 +9,7 @@ export default {
   name: "Home"
 };
 </script>
+
+<style lang="less" scoped>
+@import "../styles/home.less";
+</style>

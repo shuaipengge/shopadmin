@@ -12,6 +12,9 @@
       </el-aside>
       <!-- 右边主体内容 -->
       <el-main>
+        <!-- Tags -->
+        <HeaderTags />
+        <!-- Main -->
         <Main />
       </el-main>
     </el-container>
@@ -20,6 +23,7 @@
 
 <script>
 import Main from "@/views/Home";
+import HeaderTags from "@/components/HeaderTags";
 import Aside from "@/components/Aside";
 import Header from "@/components/Header";
 
@@ -33,7 +37,8 @@ export default {
   components: {
     Header,
     Aside,
-    Main
+    Main,
+    HeaderTags
   },
   methods: {
     parentEvent(data) {
