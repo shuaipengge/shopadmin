@@ -11,5 +11,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../styles/home.less";
+@import "~@/styles/home.less";
 </style>

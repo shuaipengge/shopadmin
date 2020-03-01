@@ -2,7 +2,7 @@
   <!-- 头部布局 -->
   <div class="header">
     <div class="h-logo">
-      <img src="../assets/logo.png" alt="logo" />
+      <img src="~@/assets/logo.png" alt="logo" />
       <span>Shop电商后台管理系统</span>
     </div>
     <div class="lgoin">
@@ -61,5 +61,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../styles/header.less";
+@import "~@/styles/header.less";
 </style>

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import store from "../store";
+import store from "@/store";
 
 export default {
   name: "HeaderTags",
@@ -34,5 +34,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "./../styles/headerTags.less";
+@import "~@/styles/headerTags.less";
 </style>

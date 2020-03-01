@@ -98,5 +98,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../styles/aside.less";
+@import "~@/styles/aside.less";
 </style>

@@ -94,5 +94,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../styles/login.less";
+@import "~@/styles/login.less";
 </style>

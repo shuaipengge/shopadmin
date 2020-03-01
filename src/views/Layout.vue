@@ -23,9 +23,9 @@
 
 <script>
 import Main from "@/views/Home";
-import HeaderTags from "@/components/HeaderTags";
-import Aside from "@/components/Aside";
-import Header from "@/components/Header";
+import HeaderTags from "@/components/layout/HeaderTags";
+import Aside from "@/components/layout/Aside";
+import Header from "@/components/layout/Header";
 
 export default {
   name: "Layout",
@@ -50,5 +50,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../styles/layout.less";
+@import "~@/styles/layout.less";
 </style>
