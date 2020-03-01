@@ -7,8 +7,8 @@
     <!-- 页面主体区域 -->
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside width="200px">
-        <Aside />
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <Aside @child-isCollapse="parentEvent" />
       </el-aside>
       <!-- 右边主体内容 -->
       <el-main>
@@ -25,10 +25,21 @@ import Header from "@/components/Header";
 
 export default {
   name: "Layout",
+  data() {
+    return {
+      isCollapse: false
+    };
+  },
   components: {
     Header,
     Aside,
     Main
+  },
+  methods: {
+    parentEvent(data) {
+      // 接收子组件的值 设置侧边栏宽度
+      this.isCollapse = data;
+    }
   }
 };
 </script>
