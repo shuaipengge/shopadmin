@@ -1,4 +1,4 @@
-import { get } from "../../utils/Service"; //导入axios实例文件中方法
+import { get } from "@/utils/Service"; //导入axios实例文件中方法
 
 const apis = {
   // 系统菜单
