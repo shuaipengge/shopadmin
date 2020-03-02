@@ -15,10 +15,18 @@
         </el-card>
       </el-col>
     </el-row>
+    <div class="echarts-card">
+      <el-card shadow="never">
+        <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+        <div id="main" style="width: 100%;height:400px;"></div>
+      </el-card>
+    </div>
   </div>
 </template>
 
 <script>
+import echarts from "echarts";
+
 export default {
   name: "Home",
   data() {
@@ -52,8 +60,88 @@ export default {
           number: 154623000,
           color: "#34bfa3"
         }
-      ]
+      ],
+      option: {
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            label: {
+              backgroundColor: "#008acd"
+            }
+          }
+        },
+        legend: {
+          data: ["预期", "实际", "上周"]
+        },
+        grid: {
+          left: "2%",
+          right: "2%",
+          bottom: "2%",
+          containLabel: true
+        },
+        toolbox: {
+          feature: {
+            saveAsImage: {}
+          }
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"]
+        },
+        yAxis: {
+          type: "value"
+        },
+        series: [
+          {
+            name: "预期",
+            type: "line",
+            smooth: true,
+            stack: "总量",
+            lineStyle: {
+              color: "#5ab1ef",
+              width: 2
+            },
+            data: [150, 200, 50, 200, 50, 80, 90]
+          },
+          {
+            name: "实际",
+            smooth: true,
+            type: "line",
+            stack: "总量",
+            lineStyle: {
+              color: "#50d6d9",
+              width: 2
+            },
+            data: [100, 100, 200, 350, 300, 350, 400]
+          },
+          {
+            name: "上周",
+            smooth: true,
+            type: "line",
+            stack: "总量",
+            lineStyle: {
+              color: "#b6a2de",
+              width: 3
+            },
+            data: [200, 250, 300, 350, 400, 450, 500]
+          }
+        ]
+      }
     };
+  },
+  mounted() {
+    // Dom渲染完成后执行
+    this.getEcharts();
+  },
+  methods: {
+    getEcharts() {
+      // 基于准备好的dom，初始化echarts实例
+      let myChart = echarts.init(document.getElementById("main"));
+      // 使用刚指定的配置项和数据显示图表。
+      myChart.setOption(this.option);
+    }
   }
 };
 </script>
