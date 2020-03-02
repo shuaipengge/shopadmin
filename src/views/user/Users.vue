@@ -29,23 +29,25 @@
         <el-col :span="3">
           <el-button type="primary">添加用户</el-button>
         </el-col>
+        <el-col :span="3">
+          <el-button @click="exportExcel" type="primary">导出表格</el-button>
+        </el-col>
       </el-row>
 
       <!-- 表格区域 -->
       <el-table :data="userlist" border stripe>
-        <el-table-column type="index" label="#"> </el-table-column>
-        <el-table-column prop="username" label="姓名"> </el-table-column>
-        <el-table-column prop="email" label="邮箱"> </el-table-column>
-        <el-table-column prop="mobile" label="电话"> </el-table-column>
-        <el-table-column prop="role_name" label="角色"> </el-table-column>
+        <el-table-column type="index" label="#"></el-table-column>
+        <el-table-column prop="username" label="姓名"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column prop="mobile" label="电话"></el-table-column>
+        <el-table-column prop="role_name" label="角色"></el-table-column>
         <el-table-column prop="type" label="状态">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.mg_state"
               active-color="#13ce66"
               @change="userStateChanged(scope.row)"
-            >
-            </el-switch>
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
@@ -88,8 +90,7 @@
             :page-size="queryInfo.pagesize"
             layout="total, sizes, prev, pager, next, jumper"
             :total="total"
-          >
-          </el-pagination>
+          ></el-pagination>
         </el-col>
       </el-row>
     </el-card>
@@ -158,6 +159,27 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    //导出的方法
+    exportExcel() {
+      require.ensure([], () => {
+        const { export_json_to_excel } = require("@/utils/Excel/Export2Excel"); //注意这个Export2Excel路径
+        const tHeader = ["ID", "姓名", "邮箱", "电话", "角色", "状态"]; // 上面设置Excel的表格第一行的标题
+        const filterVal = [
+          "id",
+          "username",
+          "email",
+          "mobile",
+          "role_name",
+          "mg_state"
+        ]; // 上面是tableData里对象的属性key值
+        const list = this.userlist; //把要导出的数据tableData存到list
+        const data = this.formatJson(filterVal, list);
+        export_json_to_excel(tHeader, data, "列表excel"); //最后一个是表名字
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]));
     }
   }
 };
