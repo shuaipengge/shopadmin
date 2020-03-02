@@ -7,7 +7,7 @@
         <i v-show="isCollapse" class="el-icon-s-unfold"></i>
       </div>
     </div>
-    <!-- {{$route.path}} -->
+    <!-- {{ $route.path }} -->
     <!-- 侧边栏菜单 -->
     <el-menu
       background-color="#304156"
@@ -44,6 +44,7 @@
                   v-for="childrenItem in subItem.children"
                   :key="childrenItem.id"
                   :index="'/' + childrenItem.path"
+                  @click="saveNavState(childrenItem)"
                 >
                   <i class="el-icon-menu"></i>
                   <span slot="title">{{ subItem.authName }}</span>
@@ -54,6 +55,7 @@
                 v-else
                 :index="'/' + subItem.path"
                 :key="subItem.id"
+                @click="saveNavState(subItem)"
               >
                 <i class="el-icon-menu"></i>
                 <span slot="title">{{ subItem.authName }}</span>
@@ -63,7 +65,11 @@
         </template>
         <!-- 一级导航 -->
         <template v-else>
-          <el-menu-item :index="'/' + item.path" :key="item.id">
+          <el-menu-item
+            :index="'/' + item.path"
+            :key="item.id"
+            @click="saveNavState(item)"
+          >
             <i :class="iconsObj[item.id]"></i>
             <span slot="title">{{ item.authName }}</span>
           </el-menu-item>
@@ -110,23 +116,23 @@ export default {
           this.menulist = res.data;
           this.menulist.unshift({
             authName: "后台首页",
-            id: "999",
+            id: 999,
             path: "home",
             children: []
           });
           this.menulist.push({
             authName: "三级菜单",
-            id: "998",
+            id: 998,
             path: "/1",
             children: [
               {
                 authName: "三级里二级",
-                id: "997",
+                id: 997,
                 path: "/2",
                 children: [
                   {
                     authName: "三级里三级",
-                    id: "996",
+                    id: 996,
                     path: "/3",
                     children: []
                   }
@@ -134,7 +140,7 @@ export default {
               },
               {
                 authName: "后台首页",
-                id: "995",
+                id: 995,
                 path: "/4",
                 children: []
               }
@@ -150,6 +156,15 @@ export default {
       this.isCollapse = !this.isCollapse;
       // 向父组件传值 改变侧边栏宽度
       this.$emit("child-isCollapse", this.isCollapse);
+    },
+    // 把点击过的链接保存到 store中
+    saveNavState(path) {
+      let router = {
+        name: path.authName,
+        id: path.id,
+        path: "/" + path.path
+      };
+      this.$store.dispatch("AddTag", router);
     }
   }
 };
