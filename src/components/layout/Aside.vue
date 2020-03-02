@@ -16,13 +16,13 @@
       unique-opened
       :collapse="isCollapse"
       :collapse-transition="false"
-      :default-active="$route.path"
+      :default-active="$route.path.slice(1)"
       router
     >
       <!-- 需要判断一级菜单下是否有二级菜单 -->
       <template v-for="item in menulist">
         <template v-if="item.children[0]">
-          <el-submenu :index="'/' + item.path" :key="item.id">
+          <el-submenu :index="item.path" :key="item.id">
             <template slot="title">
               <i :class="iconsObj[item.id]"></i>
               <span slot="title">{{ item.authName }}</span>
@@ -31,7 +31,7 @@
               <!-- 有三级导航就渲染 -->
               <el-submenu
                 v-if="subItem.children[0]"
-                :index="'/' + subItem.path"
+                :index="subItem.path"
                 :key="subItem.id"
               >
                 <!-- 包含三级的二级导航 -->
@@ -43,7 +43,7 @@
                 <el-menu-item
                   v-for="childrenItem in subItem.children"
                   :key="childrenItem.id"
-                  :index="'/' + childrenItem.path"
+                  :index="childrenItem.path"
                   @click="saveNavState(childrenItem)"
                 >
                   <i class="el-icon-menu"></i>
@@ -53,7 +53,7 @@
               <!-- 二级导航 -->
               <el-menu-item
                 v-else
-                :index="'/' + subItem.path"
+                :index="subItem.path"
                 :key="subItem.id"
                 @click="saveNavState(subItem)"
               >
@@ -66,7 +66,7 @@
         <!-- 一级导航 -->
         <template v-else>
           <el-menu-item
-            :index="'/' + item.path"
+            :index="item.path"
             :key="item.id"
             @click="saveNavState(item)"
           >
@@ -123,17 +123,17 @@ export default {
           this.menulist.push({
             authName: "三级菜单",
             id: 998,
-            path: "/1",
+            path: "1",
             children: [
               {
                 authName: "三级里二级",
                 id: 997,
-                path: "/2",
+                path: "2",
                 children: [
                   {
                     authName: "三级里三级",
                     id: 996,
-                    path: "/3",
+                    path: "3",
                     children: []
                   }
                 ]
@@ -141,7 +141,7 @@ export default {
               {
                 authName: "后台首页",
                 id: 995,
-                path: "/4",
+                path: "4",
                 children: []
               }
             ]

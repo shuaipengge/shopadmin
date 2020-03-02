@@ -13,8 +13,13 @@ export default {
       const i = state.tagsViews.findIndex(x => x.id === b.id);
       // 根据索引 判断元素是否已经存在
       if (i == -1) {
-        // TODO 判断是否超过10个 如果超过去掉第一个后再加入
-        state.tagsViews.push(b);
+        // 判断是否超过10个 如果超过去掉第一个后再加入
+        if (state.tagsViews.length < 10) {
+          state.tagsViews.push(b);
+        } else {
+          state.tagsViews.shift();
+          state.tagsViews.push(b);
+        }
       }
     },
     // 删除tag
