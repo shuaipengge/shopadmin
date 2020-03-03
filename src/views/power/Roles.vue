@@ -31,7 +31,11 @@
             >
               <!-- 渲染一级权限 -->
               <el-col :span="5">
-                <el-tag>{{ item1.authName }}</el-tag>
+                <el-tag
+                  closable
+                  @close="removeRightById(scope.row, item1.id)"
+                  >{{ item1.authName }}</el-tag
+                >
                 <i class="el-icon-caret-right"></i>
               </el-col>
 
@@ -44,15 +48,22 @@
                   :key="item2.id"
                 >
                   <el-col :span="6">
-                    <el-tag type="success">{{ item2.authName }}</el-tag>
+                    <el-tag
+                      closable
+                      @close="removeRightById(scope.row, item2.id)"
+                      type="success"
+                      >{{ item2.authName }}</el-tag
+                    >
                     <i class="el-icon-caret-right"></i>
                   </el-col>
 
                   <!-- 通过for循环来渲染三级权限 -->
                   <el-col :span="18">
                     <el-tag
+                      closable
+                      @close="removeRightById(scope.row, item3.id)"
                       type="warning"
-                      v-for="item3 in item1.children"
+                      v-for="item3 in item2.children"
                       :key="item3.id"
                       >{{ item3.authName }}</el-tag
                     >
@@ -166,6 +177,35 @@ export default {
         })
         .catch(error => {
           console.log(error);
+        });
+    },
+    // 删除角色权限
+    removeRightById(role, rightid) {
+      // 弹框提示是否删除
+      this.$confirm("此操作将移除该权限, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 执行删除逻辑
+          this.$api.Power.removeRightById(role.id, rightid)
+            .then(result => {
+              const { data: res } = result;
+              console.log(res);
+              if (res.meta.status !== 200) {
+                return this.$msg.error(res.meta.msg, "", 1500);
+              }
+              this.$msg.ok(res.meta.msg, "操作成功", 1000);
+              // 重新赋值用户权限
+              role.children = res.data;
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          this.$msg.info("已取消删除", "", 1000);
         });
     }
   }
