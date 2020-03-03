@@ -8,9 +8,11 @@
 import Login from "./login";
 import System from "./system";
 import Users from "./users";
+import Power from "./power";
 
 export default {
   Login,
   System,
-  Users
+  Users,
+  Power
 };
