@@ -61,11 +61,12 @@
               size="mini"
               @click="showEditDialog(scope.row.id)"
             ></el-button>
-
+            <!-- 删除按钮 -->
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
+              @click="removeUserById(scope.row.id)"
             ></el-button>
             <el-tooltip
               effect="dark"
@@ -367,6 +368,34 @@ export default {
             console.log(error);
           });
       });
+    },
+    // 删除用户
+    removeUserById(id) {
+      this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 执行删除逻辑
+          this.$api.Users.deleteUser(id)
+            .then(result => {
+              const { data: res } = result;
+              console.log(res);
+              if (res.meta.status !== 200) {
+                return this.$msg.error(res.meta.msg, "", 1500);
+              }
+              this.$msg.ok(res.meta.msg, "操作成功", 1000);
+              // 刷新用户列表
+              this.getUserList();
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          this.$msg.info("已取消删除", "", 1000);
+        });
     },
     //导出的方法
     exportExcel() {

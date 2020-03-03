@@ -1,4 +1,4 @@
-import { get, put, post } from "@/utils/Service"; //导入axios实例文件中方法
+import { get, put, post, deletes } from "@/utils/Service"; //导入axios实例文件中方法
 
 const apis = {
   // 系统菜单
@@ -25,6 +25,11 @@ const apis = {
   editUser(id, data) {
     console.log("修改用户信息api");
     return put(`users/${id}`, data);
+  },
+
+  deleteUser(id) {
+    console.log("删除用户api");
+    return deletes(`users/${id}`);
   }
 };
 
