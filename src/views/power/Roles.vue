@@ -21,7 +21,47 @@
       <!-- 角色列表区域 -->
       <el-table :data="rolelist" border stripe>
         <!-- 展开列 -->
-        <el-table-column type="expand"></el-table-column>
+        <el-table-column type="expand">
+          <template slot-scope="scope">
+            <!-- 根据index判断 来添加样式 -->
+            <el-row
+              :class="['bdbottom', index1 === 0 ? 'bdtop' : '', 'vcenter']"
+              v-for="(item1, index1) in scope.row.children"
+              :key="item1.id"
+            >
+              <!-- 渲染一级权限 -->
+              <el-col :span="5">
+                <el-tag>{{ item1.authName }}</el-tag>
+                <i class="el-icon-caret-right"></i>
+              </el-col>
+
+              <!-- 渲染二级和三级权限 -->
+              <el-col :span="19">
+                <!-- 通过for循环 嵌套渲染二级权限 -->
+                <el-row
+                  :class="[index2 === 0 ? '' : 'bdtop', 'vcenter']"
+                  v-for="(item2, index2) in item1.children"
+                  :key="item2.id"
+                >
+                  <el-col :span="6">
+                    <el-tag type="success">{{ item2.authName }}</el-tag>
+                    <i class="el-icon-caret-right"></i>
+                  </el-col>
+
+                  <!-- 通过for循环来渲染三级权限 -->
+                  <el-col :span="18">
+                    <el-tag
+                      type="warning"
+                      v-for="item3 in item1.children"
+                      :key="item3.id"
+                      >{{ item3.authName }}</el-tag
+                    >
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </template>
+        </el-table-column>
         <!-- 索引列 -->
         <el-table-column type="index" label="#"></el-table-column>
         <el-table-column label="角色名称" prop="roleName"></el-table-column>
@@ -61,7 +101,52 @@ export default {
   data() {
     return {
       // 所有角色列表数据
-      rolelist: []
+      rolelist: [],
+      // 控制分配权限的对话框显示与隐藏
+      setRightDialogVisble: false,
+      // 所有权限的数据
+      rightslist: [],
+      // 树形控件的属性绑定
+      treeProps: {
+        label: "authName",
+        children: "children"
+      },
+      // 默认选中的节点ID值数组
+      defKeys: [],
+      // 当前即将分配权限的角色ID
+      roleId: "",
+      // 控制添加角色的对话框显示与隐藏
+      addRolesVisible: false,
+      // 添加角色的数据表单
+      addFromRoles: {
+        roleName: "",
+        roleDesc: ""
+      },
+      // 修改角色信息的数据表单
+      editFromRoles: {},
+      // 添加表单的验证规则
+      addFromRolesRules: {
+        roleName: [
+          { required: true, message: "请输入角色名称", trigger: "blur" },
+          {
+            min: 1,
+            max: 10,
+            message: "角色名称的长度在1~10个字符之间",
+            trigger: "blur"
+          }
+        ],
+        roleDesc: [
+          { required: true, message: "请输入角色描述", trigger: "blur" },
+          {
+            min: 1,
+            max: 10,
+            message: "角色描述的长度在1~10个字符之间",
+            trigger: "blur"
+          }
+        ]
+      },
+      // 控制修改角色对话框的显示与隐藏
+      editRolesVisible: false
     };
   },
   created() {
