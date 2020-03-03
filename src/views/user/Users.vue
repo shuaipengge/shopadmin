@@ -27,7 +27,9 @@
           </el-input>
         </el-col>
         <el-col :span="3">
-          <el-button type="primary">添加用户</el-button>
+          <el-button @click="addDialogVisible = true" type="primary"
+            >添加用户</el-button
+          >
         </el-col>
         <el-col :span="3">
           <el-button @click="exportExcel" type="primary">导出表格</el-button>
@@ -94,12 +96,71 @@
         </el-col>
       </el-row>
     </el-card>
+
+    <!-- 添加用户对话框 -->
+    <el-dialog
+      title="添加用户"
+      :visible.sync="addDialogVisible"
+      width="50%"
+      @close="resetForm('addUserFormRef')"
+    >
+      <!-- 对话框内容区域  rules验证规则 ref表单名称-->
+      <el-form
+        :model="addUserForm"
+        :rules="addUserFormrules"
+        ref="addUserFormRef"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="addUserForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="addUserForm.password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="addUserForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input v-model="addUserForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <!-- 对话框底部按钮 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addUser('addUserFormRef')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
   data() {
+    // 验证邮箱的规则
+    let checkEmail = (rule, value, cd) => {
+      // 验证邮箱的正则表达式
+      const regEmail = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/;
+
+      if (regEmail.test(value)) {
+        // 合法的邮箱
+        return cd();
+      }
+      cd(new Error("请输入合法的邮箱"));
+    };
+    // 验证手机号的规则
+    let checkMoble = (rule, value, cd) => {
+      // 验证手机号的正则表达式
+      const regMoble = /^1[3456789]\d{9}$/;
+      if (regMoble.test(value)) {
+        return cd();
+      }
+      cd(new Error("请输入合法的手机号"));
+    };
+
     return {
       // 获取用户列表参数
       queryInfo: {
@@ -112,7 +173,45 @@ export default {
       // 用户列表
       userlist: [],
       // 总条数
-      total: 0
+      total: 0,
+      // 添加用户对话框
+      addDialogVisible: false,
+      // 添加用户表单数据
+      addUserForm: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
+      },
+      // 添加用户表单的验证规则对象
+      addUserFormrules: {
+        username: [
+          { required: true, message: "清输入用户名", trigger: "blur" },
+          {
+            min: 3,
+            max: 10,
+            message: "用户名的长度在3~10字符之间",
+            trigger: "blur"
+          }
+        ],
+        password: [
+          { required: true, message: "清输入密码", trigger: "blur" },
+          {
+            min: 6,
+            max: 15,
+            message: "密码的长度在3~10字符之间",
+            trigger: "blur"
+          }
+        ],
+        email: [
+          { required: true, message: "清输入邮箱", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" }
+        ],
+        mobile: [
+          { required: true, message: "清输入手机号码", trigger: "blur" },
+          { validator: checkMoble, trigger: "blur" }
+        ]
+      }
     };
   },
   created() {
@@ -159,6 +258,34 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    // 监听添加用户对话框的关闭事件
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    // 提交表单 添加用户
+    addUser(formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        // 校验通过 发送请求
+        this.$api.Users.addUser(this.addUserForm)
+          .then(result => {
+            const { data: res } = result;
+            console.log(res);
+            if (res.meta.status !== 201) {
+              return this.$msg.error(res.meta.msg, "", 1500);
+            }
+            this.$msg.ok(res.meta.msg, "操作成功", 1000);
+            // 隐藏添加用户的对话框
+            this.addDialogVisible = false;
+            // 刷新用户列表
+            this.getUserList();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        console.log("ok");
+      });
     },
     //导出的方法
     exportExcel() {

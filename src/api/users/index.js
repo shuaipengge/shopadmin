@@ -1,4 +1,4 @@
-import { get, put } from "@/utils/Service"; //导入axios实例文件中方法
+import { get, put, post } from "@/utils/Service"; //导入axios实例文件中方法
 
 const apis = {
   // 系统菜单
@@ -10,6 +10,11 @@ const apis = {
   userState(urldata) {
     console.log("修改用户状态api");
     return put(urldata);
+  },
+
+  addUser(user) {
+    console.log("添加用户api");
+    return post("users", user);
   }
 };
 
