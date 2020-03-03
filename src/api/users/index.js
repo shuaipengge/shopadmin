@@ -15,6 +15,16 @@ const apis = {
   addUser(user) {
     console.log("添加用户api");
     return post("users", user);
+  },
+
+  getUser(id) {
+    console.log("获取用户api");
+    return get(`users/${id}`);
+  },
+
+  editUser(id, data) {
+    console.log("修改用户信息api");
+    return put(`users/${id}`, data);
   }
 };
 

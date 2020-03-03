@@ -53,12 +53,15 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180px">
-          <template>
+          <template slot-scope="scope">
+            <!-- 修改按钮 -->
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
+              @click="showEditDialog(scope.row.id)"
             ></el-button>
+
             <el-button
               type="danger"
               icon="el-icon-delete"
@@ -134,6 +137,37 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 修改用户对话框 -->
+    <el-dialog
+      title="修改用户"
+      :visible.sync="editDialogVisible"
+      width="50%"
+      @click="resetForm('editFormRef')"
+    >
+      <el-form
+        :model="editUserForm"
+        :rules="addUserFormrules"
+        ref="editFormRef"
+        label-width="70px"
+      >
+        <el-form-item label="用户名">
+          <el-input v-model="editUserForm.username" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="editUserForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" prop="mobile">
+          <el-input v-model="editUserForm.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUserInfo('editFormRef')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -176,6 +210,8 @@ export default {
       total: 0,
       // 添加用户对话框
       addDialogVisible: false,
+      // 修改用户对话框
+      editDialogVisible: false,
       // 添加用户表单数据
       addUserForm: {
         username: "",
@@ -183,6 +219,8 @@ export default {
         email: "",
         mobile: ""
       },
+      // 查询到的用户信息对象
+      editUserForm: {},
       // 添加用户表单的验证规则对象
       addUserFormrules: {
         username: [
@@ -285,6 +323,49 @@ export default {
             console.log(error);
           });
         console.log("ok");
+      });
+    },
+    // 展示编辑用户对话框
+    showEditDialog(id) {
+      this.$api.Users.getUser(id)
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.$msg.ok(res.meta.msg, "操作成功", 1000);
+          this.editUserForm = res.data;
+          // 展示修改用户的对话框
+          this.editDialogVisible = true;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 修改用户信息提交
+    editUserInfo(formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        this.$api.Users.editUser(this.editUserForm.id, {
+          email: this.editUserForm.email,
+          mobile: this.editUserForm.mobile
+        })
+          .then(result => {
+            const { data: res } = result;
+            console.log(res);
+            if (res.meta.status !== 200) {
+              return this.$msg.error(res.meta.msg, "", 1500);
+            }
+            this.$msg.ok(res.meta.msg, "操作成功", 1000);
+            // 隐藏修改用户的对话框
+            this.editDialogVisible = false;
+            // 刷新用户列表
+            this.getUserList();
+          })
+          .catch(error => {
+            console.log(error);
+          });
       });
     },
     //导出的方法
