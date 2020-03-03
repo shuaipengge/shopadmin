@@ -32,7 +32,9 @@
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item class="btns">
-          <el-button type="primary" @click="login">登录</el-button>
+          <el-button type="primary" @click="login('loginFormRef')"
+            >登录</el-button
+          >
           <el-button type="info" @click="restLoginForm('loginFormRef')"
             >重置</el-button
           >
@@ -74,20 +76,24 @@ export default {
       // this.$refs.loginFormRef.resetFields();
       this.$refs[loginFormRef].resetFields(); // 新写法
     },
-    login() {
-      this.$api.Login.userLogin(this.user)
-        .then(result => {
-          const { data: res } = result;
-          console.log(res);
-          if (res.meta.status !== 200) {
-            return this.$msg.error("登录失败", "", 1500);
-          }
-          this.$store.dispatch("login", res.data.token);
-          this.$router.push("/");
-        })
-        .catch(error => {
-          console.log(error);
-        });
+    login(formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        // 校验通过 发送请求
+        this.$api.Login.userLogin(this.user)
+          .then(result => {
+            const { data: res } = result;
+            console.log(res);
+            if (res.meta.status !== 200) {
+              return this.$msg.error("登录失败", "", 1500);
+            }
+            this.$store.dispatch("login", res.data.token);
+            this.$router.push("/");
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      });
     }
   }
 };
