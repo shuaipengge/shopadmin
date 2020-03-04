@@ -24,6 +24,30 @@ const apis = {
   delCate(id) {
     console.log("删除分类api");
     return deletes(`categories/${id}`);
+  },
+
+  getParamsData(id, params) {
+    console.log("获取分类参数api");
+    return get(`categories/${id}/attributes`, params);
+  },
+
+  postParamsData(id, data) {
+    console.log("添加分类参数api");
+    return post(`categories/${id}/attributes`, data);
+  },
+
+  getParamsDataByID(cateID, attr_id, params) {
+    console.log("查询分类参数api");
+    return get(`categories/${cateID}/attributes/${attr_id}`, params);
+  },
+
+  editParams(id, attrId, params) {
+    console.log("修改分类参数api");
+    return put(`categories/${id}/attributes/${attrId}`, params);
+  },
+  delParams(id, attrid) {
+    console.log("删除分类参数api");
+    return deletes(`categories/${id}/attributes/${attrid}`);
   }
 };
 
