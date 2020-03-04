@@ -104,6 +104,29 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+    <!-- 分配权限的对话框 -->
+    <el-dialog
+      title="分配权限"
+      :visible.sync="setRightDialogVisble"
+      width="50%"
+      @close="setRightDialogClosed"
+    >
+      <!-- 树形控件 -->
+      <el-tree
+        :data="rightslist"
+        show-checkbox
+        :props="treeProps"
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="defKeys"
+        ref="treeRef"
+      ></el-tree>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRightDialogVisble = false">取 消</el-button>
+        <el-button type="primary" @click="allotRights">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -206,6 +229,65 @@ export default {
         })
         .catch(() => {
           this.$msg.info("已取消删除", "", 1000);
+        });
+    },
+    // 展示分配权限的对话框
+    async showSetRightDialog(role) {
+      this.roleId = role.id;
+      // 获取所有权限的数据
+      this.$api.Power.getRightsList("tree")
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          // 把获取到的权限数据保存到 data 中
+          this.rightslist = res.data;
+          console.log(this.rightslist);
+          // 递归获取三级节点的ID
+          this.getLeafKeys(role, this.defKeys);
+          this.setRightDialogVisble = true;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 监听分配权限对话框关闭事件
+    setRightDialogClosed() {
+      this.defKeys = [];
+    },
+    // 通过递归的形式 获取角色下所有三级权限的id 并保存到 defKey 数组中
+    getLeafKeys(node, arr) {
+      // 如果当前node节点不包含children属性，则是三级节点
+      if (!node.children) {
+        return arr.push(node.id);
+      }
+      node.children.forEach(item => this.getLeafKeys(item, arr));
+    },
+    // 点击为角色分配权限
+    allotRights() {
+      const keys = [
+        // 所有已选中数组
+        ...this.$refs.treeRef.getCheckedKeys(),
+        // 目前半选中的节点的 key 所组成的数组
+        ...this.$refs.treeRef.getHalfCheckedKeys()
+      ];
+      const idStr = keys.join(",");
+      this.$api.Power.allotRights(this.roleId, { rids: idStr })
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.$msg.ok(res.meta.msg, "操作成功", 1000);
+          // 刷新列表
+          this.getRolesList();
+          this.setRightDialogVisble = false;
+        })
+        .catch(error => {
+          console.log(error);
         });
     }
   }

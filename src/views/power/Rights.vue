@@ -42,7 +42,7 @@ export default {
   methods: {
     // 获取权限列表
     getRightsList() {
-      this.$api.Power.getRightsList()
+      this.$api.Power.getRightsList("list")
         .then(result => {
           const { data: res } = result;
           console.log(res);
