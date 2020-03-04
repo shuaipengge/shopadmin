@@ -22,7 +22,7 @@
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="getUserList"
+              @click="getUserList('search')"
             ></el-button>
           </el-input>
         </el-col>
@@ -295,7 +295,11 @@ export default {
     this.getUserList();
   },
   methods: {
-    getUserList() {
+    getUserList(search) {
+      // fix 用户在非第一页查询时,请求的参数重置第一页
+      if (search == "search") {
+        this.queryInfo.pagenum = 1;
+      }
       this.$api.Users.getUserList(this.queryInfo)
         .then(result => {
           const { data: res } = result;
