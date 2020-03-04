@@ -16,67 +16,70 @@
           >
         </el-col>
       </el-row>
+
+      <!-- 表格区域 -->
+      <tree-table
+        class="treeTable"
+        :data="catelist"
+        :columns="columns"
+        :selection-type="false"
+        :expand-type="false"
+        show-index
+        index-text="#"
+        border
+        :show-row-hover="false"
+      >
+        <!-- 是否有效 -->
+        <template slot="isok" slot-scope="scope">
+          <i
+            class="el-icon-success"
+            v-if="scope.row.cat_deleted === false"
+            style="color: lightgreen;"
+          ></i>
+          <i class="el-icon-error" v-else style="color: red;"></i>
+        </template>
+        <!-- 排序 -->
+        <template slot="order" slot-scope="scope">
+          <el-tag size="mini" v-if="scope.row.cat_level === 0">一级</el-tag>
+          <el-tag
+            size="mini"
+            type="success"
+            v-else-if="scope.row.cat_level === 1"
+            >二级</el-tag
+          >
+          <el-tag size="mini" type="warning" v-else>三级</el-tag>
+        </template>
+        <!-- 操作 -->
+        <template slot="opt" slot-scope="scope">
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="mini"
+            @click="editCate(scope.row.cat_id)"
+            >编辑</el-button
+          >
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="mini"
+            @click="delCate(scope.row.cat_id)"
+            >删除</el-button
+          >
+        </template>
+      </tree-table>
+
+      <!-- 分页区域 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="querInfo.pagenum"
+        :page-sizes="[5, 10, 15, 20]"
+        :page-size="querInfo.pagesize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        background
+      ></el-pagination>
     </el-card>
-
-    <!-- 表格区域 -->
-    <tree-table
-      class="treeTable"
-      :data="catelist"
-      :columns="columns"
-      :selection-type="false"
-      :expand-type="false"
-      show-index
-      index-text="#"
-      border
-      :show-row-hover="false"
-    >
-      <!-- 是否有效 -->
-      <template slot="isok" slot-scope="scope">
-        <i
-          class="el-icon-success"
-          v-if="scope.row.cat_deleted === false"
-          style="color: lightgreen;"
-        ></i>
-        <i class="el-icon-error" v-else style="color: red;"></i>
-      </template>
-      <!-- 排序 -->
-      <template slot="order" slot-scope="scope">
-        <el-tag size="mini" v-if="scope.row.cat_level === 0">一级</el-tag>
-        <el-tag size="mini" type="success" v-else-if="scope.row.cat_level === 1"
-          >二级</el-tag
-        >
-        <el-tag size="mini" type="warning" v-else>三级</el-tag>
-      </template>
-      <!-- 操作 -->
-      <template slot="opt" slot-scope="scope">
-        <el-button
-          type="primary"
-          icon="el-icon-edit"
-          size="mini"
-          @click="editCate(scope.row.cat_id)"
-          >编辑</el-button
-        >
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          size="mini"
-          @click="delCate(scope.row.cat_id)"
-          >删除</el-button
-        >
-      </template>
-    </tree-table>
-
-    <!-- 分页区域 -->
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="querInfo.pagenum"
-      :page-sizes="[5, 10, 15, 20]"
-      :page-size="querInfo.pagesize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="total"
-      background
-    ></el-pagination>
 
     <!-- 添加分类的对话框 -->
     <el-dialog
