@@ -9,10 +9,12 @@ import Login from "./login";
 import System from "./system";
 import Users from "./users";
 import Power from "./power";
+import Goods from "./goods";
 
 export default {
   Login,
   System,
   Users,
-  Power
+  Power,
+  Goods
 };

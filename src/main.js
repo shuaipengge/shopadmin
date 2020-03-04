@@ -11,12 +11,16 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 // 初始化css
 import "./assets/css/initialize.css";
+// 导入树形表格
+import TreeTable from "vue-table-with-tree-grid";
 
 // 绑定至原型
 Vue.prototype.$api = api;
 Vue.prototype.$msg = message;
 
 Vue.config.productionTip = false;
+
+Vue.component("tree-table", TreeTable);
 
 Vue.use(ElementUI);
 
