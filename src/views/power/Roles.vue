@@ -127,6 +127,72 @@
         <el-button type="primary" @click="allotRights">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 添加角色对话框 -->
+    <el-dialog
+      title="添加角色"
+      :visible.sync="addRolesVisible"
+      width="50%"
+      @close="resetForm('addRolesRef')"
+    >
+      <!-- 内容主体区域 -->
+      <el-form
+        ref="addRolesRef"
+        :model="addFromRoles"
+        :rules="addFromRolesRules"
+        label-width="80px"
+      >
+        <!-- 上边可以修改文本框宽度 -->
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="addFromRoles.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input v-model="addFromRoles.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="addRolesVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addRoles('addRolesRef')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <!-- 修改角色信息的对话框 -->
+    <el-dialog
+      title="修改角色信息"
+      :visible.sync="editRolesVisible"
+      width="50%"
+    >
+      <!-- :visible.sync 控制开关的布尔值
+      @close 关闭是触发的事件 方法名-->
+      <!-- 内容主体区域 -->
+      <el-form
+        ref="editRolesRef"
+        :model="editFromRoles"
+        :rules="addFromRolesRules"
+        label-width="80px"
+      >
+        <!-- 上边可以修改文本框宽度 -->
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="editFromRoles.roleName"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述" prop="roleDesc">
+          <el-input v-model="editFromRoles.roleDesc"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 底部区域 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editRolesVisible = false">取 消</el-button>
+        <!-- @click 点击添加的事件  -->
+        <el-button
+          type="primary"
+          @click="editRoles(editFromRoles.roleId, 'editRolesRef')"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -289,6 +355,100 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    // 添加角色
+    addRoles(formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        // 校验通过 发送请求
+        this.$api.Power.addRoles(this.addFromRoles)
+          .then(result => {
+            const { data: res } = result;
+            console.log(res);
+            if (res.meta.status !== 201) {
+              return this.$msg.error(res.meta.msg, "", 1500);
+            }
+            this.$msg.ok(res.meta.msg, "操作成功", 1000);
+            this.addRolesVisible = false;
+            // 重新获取角色列表数据
+            this.getRolesList();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      });
+    },
+    // 编辑角色按钮事件
+    openeditRoles(id) {
+      this.$api.Power.getRoles(id)
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.editRolesVisible = true;
+          this.editFromRoles = res.data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 确认修改角色信息
+    editRoles(id, formName) {
+      this.$refs[formName].validate(valid => {
+        if (!valid) return;
+        // 校验通过 发送请求
+        this.$api.Power.editRoles(id, this.editFromRoles)
+          .then(result => {
+            const { data: res } = result;
+            console.log(res);
+            if (res.meta.status !== 200) {
+              return this.$msg.error(res.meta.msg, "", 1500);
+            }
+            this.$msg.ok(res.meta.msg, "操作成功", 1000);
+            this.editRolesVisible = false;
+            // 重新获取角色列表数据
+            this.getRolesList();
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      });
+    },
+    // 删除角色
+    delRoles(id) {
+      this.$confirm("此操作将永久删除该角色, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 执行删除逻辑
+          this.$api.Power.delRoles(id)
+            .then(result => {
+              const { data: res } = result;
+              console.log(res);
+              if (res.meta.status !== 200) {
+                return this.$msg.error(res.meta.msg, "", 1500);
+              }
+              this.$msg.ok(res.meta.msg, "操作成功", 1000);
+              // 隐藏修改角色信息的对话框
+              this.editRolesVisible = false;
+              // 重新获取角色列表数据
+              this.getRolesList();
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          this.$msg.info("已取消删除", "", 1000);
+        });
+    },
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   }
 };
