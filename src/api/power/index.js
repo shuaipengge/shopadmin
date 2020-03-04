@@ -1,4 +1,4 @@
-import { get, post, deletes } from "@/utils/Service"; //导入axios实例文件中方法
+import { get, post, deletes, put } from "@/utils/Service"; //导入axios实例文件中方法
 
 const apis = {
   getRightsList(data) {
@@ -19,6 +19,11 @@ const apis = {
   allotRights(roleId, data) {
     console.log("分配权限api");
     return post(`roles/${roleId}/rights`, data);
+  },
+
+  saveRoleInfo(id, data) {
+    console.log("分配角色api");
+    return put(`users/${id}/role`, data);
   }
 };
 

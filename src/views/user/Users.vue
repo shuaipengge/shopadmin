@@ -68,6 +68,7 @@
               size="mini"
               @click="removeUserById(scope.row.id)"
             ></el-button>
+            <!-- 分配角色 -->
             <el-tooltip
               effect="dark"
               content="分配角色"
@@ -78,6 +79,7 @@
                 type="warning"
                 icon="el-icon-s-tools"
                 size="mini"
+                @click="setRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -169,6 +171,34 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 分配角色的对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed"
+    >
+      <div>
+        <p>当前的用户：{{ userInfo.username }}</p>
+        <p>当前的角色：{{ userInfo.role_name }}</p>
+        <p>
+          分配新的角色:
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -220,6 +250,14 @@ export default {
         email: "",
         mobile: ""
       },
+      // 控制分配角色对话框的显示与隐藏
+      setRoleDialogVisible: false,
+      // 需要被分配角色的用户信息
+      userInfo: {},
+      // 所有角色的数据列表
+      rolesList: [],
+      // 已选中的角色ID值
+      selectedRoleId: "",
       // 查询到的用户信息对象
       editUserForm: {},
       // 添加用户表单的验证规则对象
@@ -397,6 +435,24 @@ export default {
           this.$msg.info("已取消删除", "", 1000);
         });
     },
+    // 展示分配角色的对话框
+    setRole(userInfo) {
+      this.userInfo = userInfo;
+      // 获取所有角色的列表信息
+      this.$api.Power.getRolesList()
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.rolesList = res.data;
+          this.setRoleDialogVisible = true;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     //导出的方法
     exportExcel() {
       require.ensure([], () => {
@@ -417,6 +473,33 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]));
+    },
+    // 点击按钮，分配角色
+    saveRoleInfo() {
+      if (!this.selectedRoleId) {
+        return this.$message.error("请选择要分配的角色！");
+      }
+      this.$api.Power.saveRoleInfo(this.userInfo.id, {
+        rid: this.selectedRoleId
+      })
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.$msg.ok(res.meta.msg, "操作成功", 1000);
+          this.getUserList();
+          this.setRoleDialogVisible = false;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 监听分配角色对话框的关闭事件
+    setRoleDialogClosed() {
+      this.selectedRoleId = "";
+      this.userInfo = {};
     }
   }
 };
