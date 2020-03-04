@@ -271,7 +271,7 @@ export default {
     },
     // 获取父级分类的数据列表
     getParentCateList() {
-      this.$api.Goods.getCateList({ params: { type: 2 } })
+      this.$api.Goods.getCateList({ type: 2 })
         .then(result => {
           const { data: res } = result;
           console.log(res);
@@ -371,18 +371,29 @@ export default {
     },
     // 点击删除分类数据
     delCate(id) {
-      this.$api.Goods.delCate(id)
-        .then(result => {
-          const { data: res } = result;
-          console.log(res);
-          if (res.meta.status !== 200) {
-            return this.$msg.error(res.meta.msg, "", 1500);
-          }
-          this.$msg.ok(res.meta.msg, "操作成功", 1000);
-          this.getCateList();
+      this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          // 执行删除逻辑
+          this.$api.Goods.delCate(id)
+            .then(result => {
+              const { data: res } = result;
+              console.log(res);
+              if (res.meta.status !== 200) {
+                return this.$msg.error(res.meta.msg, "", 1500);
+              }
+              this.$msg.ok(res.meta.msg, "操作成功", 1000);
+              this.getCateList();
+            })
+            .catch(error => {
+              console.log(error);
+            });
         })
-        .catch(error => {
-          console.log(error);
+        .catch(() => {
+          this.$msg.info("已取消删除", "", 1000);
         });
     }
   }
