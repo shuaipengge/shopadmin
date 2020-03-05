@@ -59,6 +59,11 @@ const apis = {
   delGoods(id) {
     console.log("删除商品api");
     return deletes(`goods/${id}`);
+  },
+
+  addGoods(data) {
+    console.log("添加商品api");
+    return post("goods", data);
   }
 };
 

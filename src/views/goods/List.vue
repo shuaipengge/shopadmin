@@ -165,7 +165,7 @@ export default {
         });
     },
     goAddpage() {
-      this.$router.push("/goods/add");
+      this.$router.push("/goods_add");
     }
   }
 };

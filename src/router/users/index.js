@@ -30,6 +30,10 @@ export default {
     {
       path: "/goods",
       component: () => import("@/views/goods/List")
+    },
+    {
+      path: "/goods_add",
+      component: () => import("@/views/goods/Add")
     }
   ]
 };
