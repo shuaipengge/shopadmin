@@ -49,7 +49,37 @@
           <!-- 动态参数表格 -->
           <el-table :data="manyTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <!-- 渲染tag -->
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  @close="handleClose(index, scope.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <!-- 添加按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index" label="#"></el-table-column>
             <el-table-column
@@ -91,7 +121,37 @@
           <!-- 静态属性表格 -->
           <el-table :data="onlyTableData" border stripe>
             <!-- 展开行 -->
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <!-- 渲染tag -->
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  @close="handleClose(index, scope.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <!-- 添加按钮 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ New Tag</el-button
+                >
+              </template>
+            </el-table-column>
             <!-- 索引列 -->
             <el-table-column type="index" label="#"></el-table-column>
             <el-table-column
@@ -252,6 +312,8 @@ export default {
       // 只允许选中三级菜单
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = [];
+        this.manyTableData = [];
+        this.onlyTableData = [];
         return;
       }
       // 根据所选分类的Id 和 所处面板 获取对应的参数
@@ -262,6 +324,16 @@ export default {
           if (res.meta.status !== 200) {
             return this.$msg.error(res.meta.msg, "", 1500);
           }
+          // 参数由字符串转换为数组 方便渲染tag
+          res.data.forEach(item => {
+            item.attr_vals = item.attr_vals
+              ? (item.attr_vals = item.attr_vals.split(" "))
+              : [];
+            // 控制文本框的显示与隐藏
+            item.inputVisible = false;
+            // 文本框输入的值
+            item.inputValue = "";
+          });
           // 判断不同Tab的数据
           if (this.activeName === "many") {
             this.manyTableData = res.data;
@@ -370,6 +442,55 @@ export default {
         .catch(() => {
           this.$msg.info("已取消删除", "", 1000);
         });
+    },
+    // 文本框失去焦点，或摁下了回车
+    handleInputConfirm(row) {
+      // 如果输入的是空格直接rerun
+      if (row.inputValue.trim().length === 0) {
+        row.inputValue = "";
+        row.inputVisible = false;
+        return;
+      }
+      // 处理输入的值
+      row.attr_vals.push(row.inputValue.trim());
+      row.inputValue = "";
+      row.inputVisible = false;
+      // 需要发起请求保存
+      this.saveAttrVals(row);
+    },
+    // 保存 attr_vals
+    saveAttrVals(row) {
+      this.$api.Goods.editParams(this.cateId, row.attr_id, {
+        attr_name: row.attr_name,
+        attr_sel: row.attr_sel,
+        attr_vals: row.attr_vals.join(" ")
+      })
+        .then(result => {
+          const { data: res } = result;
+          console.log(res);
+          if (res.meta.status !== 200) {
+            return this.$msg.error(res.meta.msg, "", 1500);
+          }
+          this.$msg.ok(res.meta.msg, "操作成功", 1000);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    // 点击按钮显示文本框
+    showInput(row) {
+      row.inputVisible = true;
+      // 文本框自动获得焦点  $nextTick 当页面上元素被重新渲染后 执行回调函数中的代码
+      // eslint下一行不校验
+      // eslint-disable-next-line
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    // 删除对应的参数可选项
+    handleClose(i, row) {
+      row.attr_vals.splice(i, 1);
+      this.saveAttrVals(row);
     }
   },
   computed: {
