@@ -45,9 +45,20 @@ const apis = {
     console.log("修改分类参数api");
     return put(`categories/${id}/attributes/${attrId}`, params);
   },
+
   delParams(id, attrid) {
     console.log("删除分类参数api");
     return deletes(`categories/${id}/attributes/${attrid}`);
+  },
+
+  getCoodsList(params) {
+    console.log("商品列表api");
+    return get("goods", params);
+  },
+
+  delGoods(id) {
+    console.log("删除商品api");
+    return deletes(`goods/${id}`);
   }
 };
 
