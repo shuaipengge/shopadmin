@@ -3,7 +3,6 @@ import router from "../router";
 import utils from "./utils";
 // 导入进度条
 import Nprogress from "nprogress";
-import "nprogress/nprogress.css";
 
 // api接口地址
 const BASE_URL = process.env.VUE_APP_BASE_API
