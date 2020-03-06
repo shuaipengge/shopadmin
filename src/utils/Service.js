@@ -1,6 +1,9 @@
 import axios from "axios";
 import router from "../router";
 import utils from "./utils";
+// 导入进度条
+import Nprogress from "nprogress";
+import "nprogress/nprogress.css";
 
 // api接口地址
 const BASE_URL = process.env.VUE_APP_BASE_API
@@ -16,6 +19,8 @@ const service = axios.create({
 // 添加request拦截器
 service.interceptors.request.use(
   config => {
+    // 开始展示进度条
+    Nprogress.start();
     // 获取本地token
     const TOKEN = utils.getToken();
     if (TOKEN) {
@@ -33,6 +38,8 @@ service.interceptors.response.use(
     let res = {};
     res.status = response.status;
     res.data = response.data;
+    // 结束进度条
+    Nprogress.done();
     return res;
   },
   error => {
