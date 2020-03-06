@@ -11,6 +11,7 @@ import Users from "./users";
 import Power from "./power";
 import Goods from "./goods";
 import Orders from "./orders";
+import Report from "./report";
 
 export default {
   Login,
@@ -18,5 +19,6 @@ export default {
   Users,
   Power,
   Goods,
-  Orders
+  Orders,
+  Report
 };
