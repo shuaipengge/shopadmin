@@ -10,11 +10,13 @@ import System from "./system";
 import Users from "./users";
 import Power from "./power";
 import Goods from "./goods";
+import Orders from "./orders";
 
 export default {
   Login,
   System,
   Users,
   Power,
-  Goods
+  Goods,
+  Orders
 };

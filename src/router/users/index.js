@@ -34,6 +34,10 @@ export default {
     {
       path: "/goods_add",
       component: () => import("@/views/goods/Add")
+    },
+    {
+      path: "/orders",
+      component: () => import("@/views/order/Orders")
     }
   ]
 };
