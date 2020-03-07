@@ -7,7 +7,7 @@ import api from "./api";
 // 导入 消息提示
 import message from "./utils/Prompt";
 // 导入ElementUI fix CND导入
-// import ElementUI from "element-ui";
+import ElementUI from "element-ui";
 // import "element-ui/lib/theme-chalk/index.css";
 // 初始化css
 import "./assets/css/initialize.css";
@@ -26,7 +26,7 @@ Vue.config.productionTip = false;
 
 Vue.component("tree-table", TreeTable);
 
-// Vue.use(ElementUI);
+Vue.use(ElementUI);
 // // 注册富文本
 // Vue.use(VueQuillEditor);
 
