@@ -9,7 +9,14 @@
             </div>
             <div class="content">
               <div class="text">{{ item.text }}</div>
-              <div class="number">{{ item.number }}</div>
+              <div class="number">
+                <countTo
+                  class="font"
+                  :startVal="startVal"
+                  :endVal="item.number"
+                  :duration="1500"
+                ></countTo>
+              </div>
             </div>
           </div>
         </el-card>
@@ -26,11 +33,14 @@
 
 <script>
 import echarts from "echarts";
+import countTo from "vue-count-to";
 
 export default {
+  components: { countTo },
   name: "Home",
   data() {
     return {
+      startVal: 0,
       cards: [
         {
           id: 1,
